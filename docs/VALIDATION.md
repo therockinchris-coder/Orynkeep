@@ -1,5 +1,14 @@
 # Validation of the step 2 source package
 
+## Startup correction
+
+User-provided first-start logs showed database connection failures during
+PostgreSQL initialization, followed by a successful backend startup. The initial
+socket-based pg_isready health check could succeed against the temporary setup
+server. Compose and CI now check TCP on 127.0.0.1 instead, so that temporary
+socket-only server cannot mark the database ready. The correction has been
+checked structurally; Docker runtime validation remains outstanding.
+
 Checks performed on 2026-10-13:
 
 | Check | Result |
