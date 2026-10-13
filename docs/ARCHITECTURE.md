@@ -19,6 +19,8 @@ volumes. Only the web service is exposed, on localhost by default.
 | GET /api/health/live | 200 when the HTTP process responds |
 | GET /api/health/ready | 200 if database and writable storage checks pass; otherwise 503 |
 | GET /api/info | Project name, development version, and current stage |
+| GET /api/setup/status | First-run completion and setup enablement |
+| POST /api/setup | Token-protected, one-time administrator creation |
 
 The health endpoints expose no connection credentials, file names, or user data.
 Unknown API paths return 404. There are no user-content API routes yet.
@@ -28,7 +30,9 @@ Unknown API paths return 404. There are no user-content API routes yet.
 The initial schema reserves stable UUID identities, per-owner files and
 documents, versioned JSON document content, and a photo record referencing its
 original file. Ownership is data only at this stage: request authorization will
-be implemented before any content endpoint exists. Session, folder, sharing,
+be implemented before any content endpoint exists. Administrator setup is now
+implemented with a separate persistent singleton record in migration 002.
+Session, folder, sharing,
 and background job tables will be added by future migrations.
 
 Document revision numbers are intended for optimistic concurrency on autosave.

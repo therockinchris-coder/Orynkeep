@@ -57,8 +57,16 @@ func run() error {
 	db.SetConnMaxLifetime(30 * time.Minute)
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-	if err := db.PingContext(ctx); err != nil {
-		return errors.New("database unavailable")
+	// Initialization may briefly expose a healthy database before it restarts.
+	for {
+		if err := db.PingContext(ctx); err == nil {
+			break
+		}
+		select {
+		case <-ctx.Done():
+			return errors.New("database unavailable after waiting 30 seconds")
+		case <-time.After(time.Second):
+		}
 	}
 	if err := platform.Migrate(ctx, db); err != nil {
 		return errors.New("database migration failed; inspect schema and migration history")
@@ -74,7 +82,7 @@ func run() error {
 				return err
 			}
 			return checkStorage()
-		}),
+		}, &platform.SetupService{Store: platform.DatabaseSetupStore{DB: db}, Token: os.Getenv("SETUP_TOKEN")}),
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       30 * time.Second,
 		WriteTimeout:      30 * time.Second,

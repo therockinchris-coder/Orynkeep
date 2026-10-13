@@ -7,8 +7,11 @@ import (
 	"time"
 )
 
-func Handler(check func(context.Context) error) http.Handler {
+func Handler(check func(context.Context) error, setup ...*SetupService) http.Handler {
 	mux := http.NewServeMux()
+	if len(setup) > 0 && setup[0] != nil {
+		setup[0].register(mux)
+	}
 	mux.HandleFunc("GET /api/health/live", func(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
 	})
@@ -22,7 +25,7 @@ func Handler(check func(context.Context) error) http.Handler {
 		writeJSON(w, http.StatusOK, map[string]string{"status": "ready"})
 	})
 	mux.HandleFunc("GET /api/info", func(w http.ResponseWriter, r *http.Request) {
-		writeJSON(w, http.StatusOK, map[string]string{"name": "Orynkeep", "version": "0.1.0-dev", "stage": "foundation"})
+		writeJSON(w, http.StatusOK, map[string]string{"name": "Orynkeep", "version": "0.1.0-dev", "stage": "administrator-setup"})
 	})
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("X-Content-Type-Options", "nosniff")

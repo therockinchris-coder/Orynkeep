@@ -51,8 +51,12 @@ jobs:
       - run: docker compose up --build --wait --wait-timeout 240
         env:
           POSTGRES_PASSWORD: ci-only-password
+          SETUP_TOKEN: ci-only-setup-token-0123456789abcdef0123456789abcdef
       - run: curl --fail --retry 5 --retry-delay 2 http://127.0.0.1:8088/api/health/ready
       - run: curl --fail http://127.0.0.1:8088/ | grep -q Orynkeep
+      - run: python3 scripts/test_setup_http.py
+        env:
+          SETUP_TOKEN: ci-only-setup-token-0123456789abcdef0123456789abcdef
       - if: always()
         run: docker compose logs --no-color
         env:

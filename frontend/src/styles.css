@@ -24,4 +24,16 @@ button:focus-visible, a:focus-visible { outline: 3px solid #947836; outline-offs
 .planned { display: inline-block; background: #f0f1eb; margin-top: 16px; color: #52665d; }
 .note { max-width: 700px; font-size: 13px; color: #52665d; line-height: 1.7; margin-top: 26px; }
 footer { border-top: 1px solid #d9ded5; padding: 25px 0; font-size: 12px; color: #52665d; }
+.setup-panel { background: #fffefa; border: 1px solid #d9ded5; border-radius: 14px; padding: 30px; margin-bottom: 24px; }
+.setup-panel h2 { font-size: 26px; letter-spacing: -.5px; }
+.setup-panel > p { max-width: 660px; line-height: 1.6; color: #52665d; }
+.setup-panel.complete { background: #edf2e8; }
+.setup-panel form { max-width: 480px; margin-top: 24px; }
+.setup-panel fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+.setup-panel label { display: block; margin: 20px 0 8px; font-size: 14px; font-weight: 600; }
+.setup-panel input { width: 100%; border: 1px solid #b6c3b0; border-radius: 8px; background: white; padding: 12px; font: inherit; color: #182f29; }
+.setup-panel input:focus-visible { outline: 3px solid #947836; outline-offset: 2px; }
+.setup-panel small { display: block; color: #52665d; font-size: 12px; line-height: 1.5; margin-top: 7px; }
+.setup-panel form button { margin-top: 24px; }
+.form-error { color: #9c2727; font-size: 14px; line-height: 1.5; }
 @media (max-width: 650px) { .shell { padding: 0 20px; } header { align-items: flex-start; } .badge { max-width: 130px; } main { padding-top: 40px; } h1 { letter-spacing: -2px; } .areas { grid-template-columns: 1fr; } .health { flex-direction: column; align-items: flex-start; } .area p { min-height: 0; } }

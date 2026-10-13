@@ -11,5 +11,5 @@
 Deferred: collaboration, spreadsheets, presentations, public links, mobile
 photo backup, face grouping, and semantic search.
 
-Current step: technical foundation. Name availability and project license
+Current milestone: first-run administrator setup (login follows next). Name availability and project license
 selection remain outstanding decisions.

@@ -1,6 +1,7 @@
 import { StrictMode, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
+import { Setup } from './Setup';
 
 type Status = 'checking' | 'ready' | 'unavailable';
 
@@ -36,6 +37,7 @@ function App() {
         <div><h2 id="health-title">System connection</h2><p role="status" aria-live="polite">{status === 'ready' ? 'Backend, database, and storage are ready.' : status === 'checking' ? 'Checking your server…' : 'Unable to reach a ready server. Check the service logs and retry.'}</p></div>
         <button disabled={status === 'checking'} onClick={() => setAttempt(value => value + 1)}>Check again</button>
       </section>
+      <Setup />
       <div className="areas">
         {[
           ['01', 'Files', 'Your folders and files, kept on your own storage.'],

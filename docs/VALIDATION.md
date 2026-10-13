@@ -1,5 +1,21 @@
 # Validation of the step 2 source package
 
+## First-run setup milestone
+
+Frontend TypeScript/production build, Go build, go vet, and backend unit tests
+passed for the administrator setup implementation, including Go's race detector.
+Unit coverage includes
+missing/wrong tokens, setup closure, origin rejection, invalid email/password,
+oversized or malformed JSON, Argon2id hash verification, and sanitized errors.
+PostgreSQL migration and simultaneous-claim integration tests require
+TEST_DATABASE_URL and were skipped locally because no database server is
+available. CI now includes these tests and a real HTTP setup smoke test against
+the Docker stack. Those CI checks have not been executed here.
+
+The user confirmed that the previous foundation's three containers were
+healthy on their Docker host. This confirms that earlier version's startup;
+it does not validate the new setup migration or HTTP endpoints.
+
 ## Startup correction
 
 User-provided first-start logs showed database connection failures during

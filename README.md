@@ -2,13 +2,13 @@
 
 A self-hosted home for files, simple documents, and photos.
 
-## Current milestone: step 2 — technical foundation
+## Current milestone: first-run administrator setup
 
 Implemented: React/TypeScript web shell, Go HTTP API, PostgreSQL schema and
 transactional migrations, writable local storage checks, Docker Compose,
-health endpoints, and CI definitions.
+health endpoints, first-run administrator creation, and CI definitions.
 
-File operations, administrator setup/login, document editing, and photo browsing
+File operations, login, document editing, and photo browsing
 are not implemented yet. The web shell labels these areas as planned.
 
 ## Start with Docker
@@ -19,13 +19,18 @@ images and build dependencies. Run commands from this directory.
 1. Copy `.env.example` to `.env`.
 2. Set `POSTGRES_PASSWORD` to a new random hexadecimal password. For example,
    generate one with `openssl rand -hex 32`. Paste it into `.env`; do not commit it.
-3. Start the services:
+3. Generate a second value with `openssl rand -hex 32` and set `SETUP_TOKEN` in
+   `.env`. This token protects first-run setup; enter it in the setup form.
+4. Start the services:
 
 ```sh
 docker compose up --build --wait
 ```
 
 Open http://localhost:8088. The system connection should report ready.
+Create your administrator account using the setup form. Existing installations:
+follow [the upgrade and setup instructions](docs/FIRST_RUN.md); preserve your
+existing `.env` and data volumes.
 The port binds to localhost; PostgreSQL and the API have no published ports.
 
 ```sh
@@ -46,6 +51,7 @@ database separately, then in `backend/`:
 ```sh
 export DATABASE_URL='postgres://orynkeep:YOUR_PASSWORD@localhost:5432/orynkeep?sslmode=disable'
 export STORAGE_PATH='./data'
+export SETUP_TOKEN='YOUR_SEPARATELY_GENERATED_SETUP_TOKEN'
 go mod tidy
 go run ./cmd/server
 ```
@@ -117,7 +123,7 @@ on a Docker-capable host.
 
 ## Next milestone
 
-Administrator bootstrap, password hashing, sessions, logout, then an authenticated
+Login, sessions, logout, then an authenticated
 upload → list → download flow. Access control tests must pass before user data
 endpoints are added. Folders, rename, deletion, a simple document editor, and
 the photo gallery follow within v0.1.
