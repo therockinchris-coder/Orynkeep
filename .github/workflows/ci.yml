@@ -1,0 +1,63 @@
+name: Foundation checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: orynkeep
+          POSTGRES_PASSWORD: ci-only-password
+          POSTGRES_DB: orynkeep_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U orynkeep -d orynkeep_test"
+          --health-interval 5s --health-timeout 3s --health-retries 20
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: backend/go.mod
+          cache: false
+      - run: go mod tidy
+      - run: git diff --exit-code -- go.mod go.sum
+      - run: go vet ./...
+      - run: go test -race ./...
+        env:
+          TEST_DATABASE_URL: postgres://orynkeep:ci-only-password@localhost:5432/orynkeep_test?sslmode=disable
+      - run: go build ./cmd/server
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build
+  compose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose up --build --wait --wait-timeout 240
+        env:
+          POSTGRES_PASSWORD: ci-only-password
+      - run: curl --fail --retry 5 --retry-delay 2 http://127.0.0.1:8088/api/health/ready
+      - run: curl --fail http://127.0.0.1:8088/ | grep -q Orynkeep
+      - if: always()
+        run: docker compose logs --no-color
+        env:
+          POSTGRES_PASSWORD: ci-only-password
+      - if: always()
+        run: docker compose down --volumes
+        env:
+          POSTGRES_PASSWORD: ci-only-password
